@@ -1,7 +1,9 @@
 #include <stdbool.h>
 #include <inttypes.h>
+#include <avr/io.h>
 #include <util/delay.h>
 #include "userdata.h"
+#include "config.h"
 
 //! initialize the system
 void initControl(void);
@@ -11,11 +13,16 @@ void measureHandpistols(void);
 void measureSupply(void);
 //! check if hardware buttons were pressed
 void getButtonStates(void);
+//! check if there is a short on your rails. disable the power
+bool checkShort(void);
 
 int main(void)
 {
     // system setup
     initControl();
+
+    while(checkShort())
+        _delay_ms(10);
 
     // should never be leaved!
     while(1)
@@ -26,7 +33,6 @@ int main(void)
         getButtonStates();
         // update the system variables
         updateCars();
-
         // get supply current and voltages
         measureSupply();
     }
@@ -44,7 +50,8 @@ void initControl(void)
 
 void measureHandpistols(void)
 {
-    for (int i = 0; i < 4; i++)
+    static uint8_t i;
+    for (i = 0; i < 4; i++)
     {
         startADC(i);
     }
@@ -52,12 +59,23 @@ void measureHandpistols(void)
 
 void measureSupply(void)
 {
+    // check if there is a short connection
+
+
     startADC(ADC_MUX_PSU_I);
-    startADC(ADC_MUX_PSU_U);
+    startADC(ADC_MUX_PSU_U);    
 }
 
 void getButtonStates(void)
 {
     startADC(ADC_MUX_SWITCH_FUEL);
     startADC(ADC_MUX_RAIL_RX);
+}
+
+bool checkShort(void)
+{
+    while(_RB(PINA, ADC_MUX_RAIL_RX))
+    {
+        _delay_ms(10);
+    }
 }

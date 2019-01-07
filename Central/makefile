@@ -1,5 +1,5 @@
 TARGET=control
-MCU=atmega32u4
+MCU=atmega32
 SOURCES=main.c \
 		adc.c \
 		userdata.c
@@ -11,7 +11,7 @@ PROGRAMMER=usbasp
 
 #Ab hier nichts verändern
 OBJECTS=$(SOURCES:.c=.o)
-CFLAGS=-c -Os
+CFLAGS=-c -Os -DF_CPU=16000000
 LDFLAGS=
 
 all: hex eeprom

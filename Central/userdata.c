@@ -33,7 +33,8 @@ void carRefuel(uint8_t id)
 
 void updateCars(void)
 {
-    for ( int i = 0; i < MAX_CARS; i++ ) 
+    static uint8_t i;
+    for (i = 0; i < MAX_CARS; i++ ) 
     {
         updateData(&car[i]);
     }
@@ -61,7 +62,8 @@ void carSetSwitch(uint8_t id, _Bool sw)
 
 void initCars(void)
 {
-    for(int i = 0; i < MAX_CARS; i++)
+    uint8_t i;
+    for(i = 0; i < MAX_CARS; i++)
     {
         initCar(&car[i]);
     }
